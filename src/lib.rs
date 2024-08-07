@@ -21,7 +21,7 @@ use cglinalg::{
 
 /// Construct a new orthographic projection transformation mapping from 
 /// an eye space with a right-handed coordinate system to a clip space with a 
-/// left-handed coordinate coordinate system compatible with Metal's normalized 
+/// left-handed coordinate system compatible with Metal's normalized 
 /// device coordinates.
 ///
 /// The source eye space coordinate system is a right-handed coordinate 
@@ -39,18 +39,20 @@ use cglinalg::{
 /// * The clip space **y-axis** faces up.
 /// * The clip space **z-axis** faces the camera forward direction.
 /// 
-/// In particular, we map the eye space **z-axis** to the clip space **z-axis** by
-/// changing the sign of the eye space **z coordinate**. The transformation maps 
-/// the eye space volume `[left, right] x [bottom, top] x [-far, -near]` to 
-/// the normalized device coordinates `[-1, -1] x [-1, 1] x [0, 1]`. The projection
-/// matrix is given by
+/// The transformation maps the eye space volume 
+/// `[left, right] x [bottom, top] x [-far, -near]` to the clip space that maps to
+/// the normalized device coordinates `[-1, -1] x [-1, 1] x [0, 1]` under 
+/// division by the **w-component**.
+/// 
 /// ```text
 /// [ m[0, 0]  0        0        m[3, 0] ]
 /// [ 0        m[1, 1]  0        m[3, 1] ]
 /// [ 0        0        m[2, 2]  m[3, 2] ]
 /// [ 0        0        0        1       ]
 /// ```
+/// 
 /// where
+/// 
 /// ```text
 /// m[0, 0] ==  2 / (right - left)
 /// m[3, 0] == -(right + left) / (right - left)
@@ -59,6 +61,7 @@ use cglinalg::{
 /// m[2, 2] == -1 / (far - near)
 /// m[3, 2] == -near / (far - near)
 /// ```
+/// 
 /// where the matrix entries are indexed in column-major order.
 /// 
 /// # Parameters
@@ -80,6 +83,7 @@ use cglinalg::{
 /// 
 /// The parameters must satisfy the following constraints to generate a valid 
 /// orthographic projection matrix.
+/// 
 /// ```text
 /// left < right
 /// bottom < top
@@ -148,7 +152,7 @@ where
 
 /// Construct a new orthographic projection transformation mapping from 
 /// an eye space with a left-handed coordinate system to a clip space with a 
-/// left-handed coordinate coordinate system compatible with Metal's normalized 
+/// left-handed coordinate system compatible with Metal's normalized 
 /// device coordinates.
 ///
 /// The source eye space coordinate system is a left-handed coordinate 
@@ -166,15 +170,21 @@ where
 /// * The clip space **z-axis** faces the camera forward direction.
 /// 
 /// The transformation maps the eye space volume 
-/// `[left, right] x [bottom, top] x [near, far]` to the normalized device coordinates
-/// `[-1, -1] x [-1, 1] x [0, 1]`. The projection matrix is given by
+/// `[left, right] x [bottom, top] x [near, far]` to the clip space that maps to
+/// the normalized device coordinates `[-1, -1] x [-1, 1] x [0, 1]` under 
+/// division by the **w-component**.
+/// 
+/// The projection matrix is given by
+/// 
 /// ```text
 /// [ m[0, 0]  0        0        m[3, 0] ]
 /// [ 0        m[1, 1]  0        m[3, 1] ]
 /// [ 0        0        m[2, 2]  m[3, 2] ]
 /// [ 0        0        0        1       ]
 /// ```
+/// 
 /// where
+/// 
 /// ```text
 /// m[0, 0] ==  2 / (right - left)
 /// m[3, 0] == -(right + left) / (right - left)
@@ -183,6 +193,7 @@ where
 /// m[2, 2] ==  1 / (far - near)
 /// m[3, 2] == -near / (far - near)
 /// ```
+/// 
 /// where the matrix entries are indexed in column-major order. 
 /// 
 /// # Parameters
@@ -204,6 +215,7 @@ where
 ///
 /// The parameters must satisfy the following constraints to generate a valid 
 /// orthographic projection matrix.
+/// 
 /// ```text
 /// left < right
 /// bottom < top
@@ -272,7 +284,7 @@ where
 
 /// Construct a new perspective field of view projection transformation 
 /// mapping from an eye space with a right-handed coordinate system to a clip space 
-/// with a left-handed coordinate coordinate system compatible with Metal's 
+/// with a left-handed coordinate system compatible with Metal's 
 /// normalized device coordinates.
 ///
 /// The source eye space coordinate system is a right-handed coordinate 
@@ -296,27 +308,35 @@ where
 /// field of view angle `vfov` and the aspect ratio `aspect_ratio`. The 
 /// aspect ratio `aspect_ratio` is the ratio of the width of the camera viewport to 
 /// the height of the camera viewport. Here
+/// 
 /// ```text
 /// tan(vfov) == top / near
 /// aspect_ratio == right / top
 /// ```
+/// 
 /// The transformation maps the eye space frustum volume contained in 
-/// `[-right, right] x [-top, top] x [-far, -near]` to the normalized device 
-/// coordinates `[-1, -1] x [-1, 1] x [0, 1]`. The projection matrix is given 
-/// by
+/// `[-right, right] x [-top, top] x [-far, -near]` to the clip space that maps to
+/// the normalized device coordinates `[-1, -1] x [-1, 1] x [0, 1]` under 
+/// division by the **w-component**.
+/// 
+/// The projection matrix is given by
+/// 
 /// ```text
 /// [ m[0, 0]  0         0        0       ]
 /// [ 0        m[1, 1]   0        0       ]
 /// [ 0        0         m[2, 2]  m[3, 2] ]
 /// [ 0        0        -1        0       ]
 /// ```
+/// 
 /// where
+/// 
 /// ```text
 /// m[0, 0] ==  1 / (aspect_ratio * tan(vfov / 2))
 /// m[1, 1] ==  1 / tan(vfov / 2)
 /// m[2, 2] == -far / (far - near)
 /// m[3, 2] == -(far * near) / (far - near)
 /// ```
+/// 
 /// where the matrix entries are indexed in column-major order.
 /// 
 /// # Parameters
@@ -334,6 +354,7 @@ where
 ///
 /// The parameters must satisfy the following constraints to generate a valid 
 /// perspective projection matrix.
+/// 
 /// ```text
 /// vfov > 0
 /// aspect_ratio > 0
@@ -408,7 +429,7 @@ where
 
 /// Construct a new perspective field of view projection transformation 
 /// mapping from an eye space with a left-handed coordinate system to a clip space 
-/// with a left-handed coordinate coordinate system compatible with Metal's 
+/// with a left-handed coordinate system compatible with Metal's 
 /// normalized device coordinates.
 ///
 /// The source eye space coordinate system is a left-handed coordinate 
@@ -431,27 +452,35 @@ where
 /// field of view angle `vfov` and the aspect ratio `aspect_ratio`. The 
 /// aspect ratio `ascpect_ratio` is the ratio of the width of the camera viewport to 
 /// the height of the camera viewport. Here
+/// 
 /// ```text
 /// tan(vfov) == top / near
 /// aspect_ratio == right / top
 /// ```
+/// 
 /// The transformation maps the eye space frustum volume contained in 
-/// `[-right, right] x [-top, top] x [near, far]` to the normalized device 
-/// coordinates `[-1, -1] x [-1, 1] x [0, 1]`. The projection matrix is given 
-/// by
+/// `[-right, right] x [-top, top] x [near, far]` to the clip space that maps to
+/// the normalized device coordinates `[-1, -1] x [-1, 1] x [0, 1]` under
+/// division by the **w-component**.
+/// 
+/// The projection matrix is given by
+/// 
 /// ```text
 /// [ m[0, 0]  0        0        0       ]
 /// [ 0        m[1, 1]  0        0       ]
 /// [ 0        0        m[2, 2]  m[3, 2] ]
 /// [ 0        0        1        0       ]
 /// ```
+/// 
 /// where
+/// 
 /// ```text
 /// m[0, 0] ==  1 / (aspect_ratio * tan(vfov / 2))
 /// m[1, 1] ==  1 / tan(vfov / 2)
 /// m[2, 2] ==  far / (far - near)
 /// m[3, 2] == -(far * near) / (far - near)
 /// ```
+/// 
 /// where the matrix entries are indexed in column-major order. 
 /// 
 /// # Parameters
@@ -469,6 +498,7 @@ where
 /// 
 /// The input parameters must satisfy the following constraints to generate a valid 
 /// perspective projection matrix.
+/// 
 /// ```text
 /// vfov > 0
 /// aspect_ratio > 0
@@ -543,7 +573,7 @@ where
 
 /// Construct a new perspective projection transformation mapping from 
 /// an eye space with a right-handed coordinate system to a clip space with a 
-/// left-handed coordinate coordinate system compatible with Metal's normalized 
+/// left-handed coordinate system compatible with Metal's normalized 
 /// device coordinates.
 ///
 /// The source eye space coordinate system is a right-handed coordinate 
@@ -561,18 +591,22 @@ where
 /// * The clip space **y-axis** faces up.
 /// * The clip space **z-axis** faces the camera forward direction.
 ///
-/// In particular, we map the eye space **z-axis** to the clip space **z-axis** by
-/// changing the sign of the eye space **z coordinate**. The transformation maps 
-/// the eye space frustum volume contained in `[left, right] x [bottom, top] x [-far, -near]` 
-/// to the normalized device coordinates `[-1, -1] x [-1, 1] x [0, 1]`. The projection
-/// matrix is given by
+/// The transformation maps the eye space frustum volume contained in
+/// `[left, right] x [bottom, top] x [-far, -near]` to the clip space that maps to
+/// the normalized device coordinates `[-1, -1] x [-1, 1] x [0, 1]` under
+/// division by the **w-component**.
+/// 
+/// The projection matrix is given by
+/// 
 /// ```text
 /// [ m[0, 0]  0         m[2, 0]  0       ]
 /// [ 0        m[1, 1]   m[2, 1]  0       ]
 /// [ 0        0         m[2, 2]  m[3, 2] ]
 /// [ 0        0        -1        0       ]
 /// ```
+/// 
 /// where
+/// 
 /// ```text
 /// m[0, 0] ==  2 * near / (right - left)
 /// m[2, 0] ==  (right + left) / (right - left)
@@ -581,6 +615,7 @@ where
 /// m[2, 2] == -far / (far - near)
 /// m[3, 2] == -(far * near) / (far - near)
 /// ```
+/// 
 /// where the matrix entries are indexed in column-major order.
 /// 
 /// # Parameters
@@ -602,6 +637,7 @@ where
 /// 
 /// The parameters must satisfy the following constraints to generate a valid 
 /// perspective projection matrix.
+/// 
 /// ```text
 /// left < right
 /// bottom < top
@@ -670,7 +706,7 @@ where
 
 /// Construct a new perspective projection transformation mapping from 
 /// an eye space with a left-handed coordinate system to a clip space with a 
-/// left-handed coordinate coordinate system compatible with Metal's normalized 
+/// left-handed coordinate system compatible with Metal's normalized 
 /// device coordinates.
 ///
 /// The source eye space coordinate system is a left-handed coordinate 
@@ -687,16 +723,22 @@ where
 /// * The clip space **y-axis** faces up.
 /// * The clip space **z-axis** faces the camera forward direction.
 /// 
-/// The transformation maps the eye space volume 
-/// `[left, right] x [bottom, top] x [near, far]` to the normalized device coordinates
-/// `[-1, -1] x [-1, 1] x [0, 1]`. The projection matrix is given by
+/// The transformation maps the eye space volume frustum volume contained in
+/// `[left, right] x [bottom, top] x [near, far]` to the clip space that maps to 
+/// the normalized device coordinates `[-1, -1] x [-1, 1] x [0, 1]` under 
+/// division by the **w-component**. 
+/// 
+/// The projection matrix is given by
+/// 
 /// ```text
 /// [ m[0, 0]  0        m[2, 0]  0       ]
 /// [ 0        m[1, 1]  m[2, 1]  0       ]
 /// [ 0        0        m[2, 2]  m[3, 2] ]
 /// [ 0        0        1        0       ]
 /// ```
+/// 
 /// where
+/// 
 /// ```text
 /// m[0, 0] ==  2 * near / (right - left)
 /// m[2, 0] == -(right + left) / (right - left)
@@ -705,6 +747,7 @@ where
 /// m[2, 2] ==  far / (far - near)
 /// m[3, 2] == -(far * near) / (far - near)
 /// ```
+/// 
 /// where the matrix entries are indexed in column-major order.
 /// 
 /// # Parameters
@@ -725,6 +768,7 @@ where
 ///
 /// The parameters must satisfy the following constraints to generate a valid 
 /// perspective projection matrix.
+/// 
 /// ```text
 /// left < right
 /// bottom < top
