@@ -40,7 +40,7 @@ use cglinalg::{
 /// * The clip space **z-axis** faces the camera forward direction.
 /// 
 /// The transformation maps the eye space volume 
-/// `[left, right] x [bottom, top] x [-far, -near]` to the clip space that maps to
+/// `[-left, right] x [-bottom, top] x [-far, -near]` to the clip space that maps to
 /// the normalized device coordinates `[-1, -1] x [-1, 1] x [0, 1]` under 
 /// division by the **w-component**.
 /// 
@@ -54,10 +54,10 @@ use cglinalg::{
 /// where
 /// 
 /// ```text
-/// m[0, 0] ==  2 / (right - left)
-/// m[3, 0] == -(right + left) / (right - left)
-/// m[1, 1] ==  2 / (top - bottom)
-/// m[3, 1] == -(top + bottom) / (top - bottom)
+/// m[0, 0] ==  2 / (right - (-left))
+/// m[3, 0] == -(right + (-left)) / (right - (-left))
+/// m[1, 1] ==  2 / (top - (-bottom))
+/// m[3, 1] == -(top + (-bottom)) / (top - (-bottom))
 /// m[2, 2] == -1 / (far - near)
 /// m[3, 2] == -near / (far - near)
 /// ```
@@ -85,9 +85,11 @@ use cglinalg::{
 /// orthographic projection matrix.
 /// 
 /// ```text
-/// left < right
-/// bottom < top
-/// 0 < near < far
+/// left       > 0
+/// right      > 0
+/// bottom     > 0
+/// top        > 0
+/// far > near > 0
 /// ```
 /// 
 /// # Example
@@ -96,9 +98,9 @@ use cglinalg::{
 /// # use approx_cmp::assert_relative_eq;
 /// # use cglinalg::Matrix4x4;
 /// #
-/// let left = -4_f32;
+/// let left = 4_f32;
 /// let right = 4_f32;
-/// let bottom = -3_f32;
+/// let bottom = 3_f32;
 /// let top = 3_f32;
 /// let near = 0.1_f32;
 /// let far = 100_f32;
@@ -122,13 +124,13 @@ where
     let one = S::one();
     let two = one + one;
 
-    let c0r0 = two / (right - left);
+    let c0r0 = two / (right - (-left));
     let c0r1 = zero;
     let c0r2 = zero;
     let c0r3 = zero;
 
     let c1r0 = zero;
-    let c1r1 = two / (top - bottom);
+    let c1r1 = two / (top - (-bottom));
     let c1r2 = zero;
     let c1r3 = zero;
 
@@ -137,8 +139,8 @@ where
     let c2r2 = -one / (far - near);
     let c2r3 =  zero;
 
-    let c3r0 = -(right + left) / (right - left);
-    let c3r1 = -(top + bottom) / (top - bottom);
+    let c3r0 = -(right + (-left)) / (right - (-left));
+    let c3r1 = -(top + (-bottom)) / (top - (-bottom));
     let c3r2 = -near / (far - near);
     let c3r3 =  one;
 
@@ -170,7 +172,7 @@ where
 /// * The clip space **z-axis** faces the camera forward direction.
 /// 
 /// The transformation maps the eye space volume 
-/// `[left, right] x [bottom, top] x [near, far]` to the clip space that maps to
+/// `[-left, right] x [-bottom, top] x [near, far]` to the clip space that maps to
 /// the normalized device coordinates `[-1, -1] x [-1, 1] x [0, 1]` under 
 /// division by the **w-component**.
 /// 
@@ -186,10 +188,10 @@ where
 /// where
 /// 
 /// ```text
-/// m[0, 0] ==  2 / (right - left)
-/// m[3, 0] == -(right + left) / (right - left)
-/// m[1, 1] ==  2 / (top - bottom)
-/// m[3, 1] == -(top + bottom) / (top - bottom)
+/// m[0, 0] ==  2 / (right - (-left))
+/// m[3, 0] == -(right + (-left)) / (right - (-left))
+/// m[1, 1] ==  2 / (top - (-bottom))
+/// m[3, 1] == -(top + (-bottom)) / (top - (-bottom))
 /// m[2, 2] ==  1 / (far - near)
 /// m[3, 2] == -near / (far - near)
 /// ```
@@ -217,9 +219,11 @@ where
 /// orthographic projection matrix.
 /// 
 /// ```text
-/// left < right
-/// bottom < top
-/// 0 < near < far
+/// left       > 0
+/// right      > 0
+/// bottom     > 0
+/// top        > 0
+/// far > near > 0
 /// ```
 /// 
 /// # Example
@@ -228,9 +232,9 @@ where
 /// # use approx_cmp::assert_relative_eq;
 /// # use cglinalg::Matrix4x4;
 /// #
-/// let left = -4_f32;
+/// let left = 4_f32;
 /// let right = 4_f32;
-/// let bottom = -3_f32;
+/// let bottom = 3_f32;
 /// let top = 3_f32;
 /// let near = 0.1_f32;
 /// let far = 100_f32;
@@ -254,13 +258,13 @@ where
     let one = S::one();
     let two = one + one;
 
-    let c0r0 = two / (right - left);
+    let c0r0 = two / (right - (-left));
     let c0r1 = zero;
     let c0r2 = zero;
     let c0r3 = zero;
 
     let c1r0 = zero;
-    let c1r1 = two / (top - bottom);
+    let c1r1 = two / (top - (-bottom));
     let c1r2 = zero;
     let c1r3 = zero;
 
@@ -269,8 +273,8 @@ where
     let c2r2 = one / (far - near);
     let c2r3 = zero;
 
-    let c3r0 = -(right + left) / (right - left);
-    let c3r1 = -(top + bottom) / (top - bottom);
+    let c3r0 = -(right + (-left)) / (right - (-left));
+    let c3r1 = -(top + (-bottom)) / (top - (-bottom));
     let c3r2 = -near / (far - near);
     let c3r3 =  one;
 
@@ -356,9 +360,11 @@ where
 /// perspective projection matrix.
 /// 
 /// ```text
-/// vfov > 0
-/// aspect_ratio > 0
-/// 0 < near < far
+/// left       > 0
+/// right      > 0
+/// bottom     > 0
+/// top        > 0
+/// far > near > 0
 /// ```
 /// 
 /// # Example
@@ -500,9 +506,11 @@ where
 /// perspective projection matrix.
 /// 
 /// ```text
-/// vfov > 0
-/// aspect_ratio > 0
-/// 0 < near < far
+/// left       > 0
+/// right      > 0
+/// bottom     > 0
+/// top        > 0
+/// far > near > 0
 /// ```
 ///
 /// # Example
@@ -592,7 +600,7 @@ where
 /// * The clip space **z-axis** faces the camera forward direction.
 ///
 /// The transformation maps the eye space frustum volume contained in
-/// `[left, right] x [bottom, top] x [-far, -near]` to the clip space that maps to
+/// `[-left, right] x [-bottom, top] x [-far, -near]` to the clip space that maps to
 /// the normalized device coordinates `[-1, -1] x [-1, 1] x [0, 1]` under
 /// division by the **w-component**.
 /// 
@@ -608,10 +616,10 @@ where
 /// where
 /// 
 /// ```text
-/// m[0, 0] ==  2 * near / (right - left)
-/// m[2, 0] ==  (right + left) / (right - left)
-/// m[1, 1] ==  2 * near / (top - bottom)
-/// m[2, 1] ==  (top + bottom) / (top - bottom)
+/// m[0, 0] ==  2 * near / (right - (-left))
+/// m[2, 0] ==  (right + (-left)) / (right - (-left))
+/// m[1, 1] ==  2 * near / (top - (-bottom))
+/// m[2, 1] ==  (top + (-bottom)) / (top - (-bottom))
 /// m[2, 2] == -far / (far - near)
 /// m[3, 2] == -(far * near) / (far - near)
 /// ```
@@ -639,9 +647,11 @@ where
 /// perspective projection matrix.
 /// 
 /// ```text
-/// left < right
-/// bottom < top
-/// 0 < near < far
+/// left       > 0
+/// right      > 0
+/// bottom     > 0
+/// top        > 0
+/// far > near > 0
 /// ```
 /// 
 /// # Example
@@ -650,9 +660,9 @@ where
 /// # use approx_cmp::assert_relative_eq;
 /// # use cglinalg::Matrix4x4;
 /// #
-/// let left = -4_f32;
+/// let left = 4_f32;
 /// let right = 4_f32;
-/// let bottom = -3_f32;
+/// let bottom = 3_f32;
 /// let top = 3_f32;
 /// let near = 0.1_f32;
 /// let far = 100_f32;
@@ -676,18 +686,18 @@ where
     let one = S::one();
     let two = one + one;
 
-    let c0r0 = (two * near) / (right - left);
+    let c0r0 = (two * near) / (right - (-left));
     let c0r1 = zero;
     let c0r2 = zero;
     let c0r3 = zero;
 
     let c1r0 = zero;
-    let c1r1 = (two * near) / (top - bottom);
+    let c1r1 = (two * near) / (top - (-bottom));
     let c1r2 = zero;
     let c1r3 = zero;
 
-    let c2r0 =  (right + left) / (right - left);
-    let c2r1 =  (top + bottom) / (top - bottom);
+    let c2r0 =  (right + (-left)) / (right - (-left));
+    let c2r1 =  (top + (-bottom)) / (top - (-bottom));
     let c2r2 = -far / (far - near);
     let c2r3 = -one;
 
@@ -724,7 +734,7 @@ where
 /// * The clip space **z-axis** faces the camera forward direction.
 /// 
 /// The transformation maps the eye space volume frustum volume contained in
-/// `[left, right] x [bottom, top] x [near, far]` to the clip space that maps to 
+/// `[-left, right] x [-bottom, top] x [near, far]` to the clip space that maps to 
 /// the normalized device coordinates `[-1, -1] x [-1, 1] x [0, 1]` under 
 /// division by the **w-component**. 
 /// 
@@ -740,10 +750,10 @@ where
 /// where
 /// 
 /// ```text
-/// m[0, 0] ==  2 * near / (right - left)
-/// m[2, 0] == -(right + left) / (right - left)
-/// m[1, 1] ==  2 * near / (top - bottom)
-/// m[2, 1] == -(top + bottom) / (top - bottom)
+/// m[0, 0] ==  2 * near / (right - (-left))
+/// m[2, 0] == -(right + left) / (right - (-left))
+/// m[1, 1] ==  2 * near / (top - (-bottom))
+/// m[2, 1] == -(top + (-bottom)) / (top - (-bottom))
 /// m[2, 2] ==  far / (far - near)
 /// m[3, 2] == -(far * near) / (far - near)
 /// ```
@@ -770,9 +780,11 @@ where
 /// perspective projection matrix.
 /// 
 /// ```text
-/// left < right
-/// bottom < top
-/// 0 < near < far
+/// left       > 0
+/// right      > 0
+/// bottom     > 0
+/// top        > 0
+/// far > near > 0
 /// ```
 /// 
 /// # Example
@@ -781,9 +793,9 @@ where
 /// # use approx_cmp::assert_relative_eq;
 /// # use cglinalg::Matrix4x4;
 /// #
-/// let left = -4_f32;
+/// let left = 4_f32;
 /// let right = 4_f32;
-/// let bottom = -3_f32;
+/// let bottom = 3_f32;
 /// let top = 3_f32;
 /// let near = 0.1_f32;
 /// let far = 100_f32;
@@ -807,18 +819,18 @@ where
     let one = S::one();
     let two = one + one;
 
-    let c0r0 = (two * near) / (right - left);
+    let c0r0 = (two * near) / (right - (-left));
     let c0r1 = zero;
     let c0r2 = zero;
     let c0r3 = zero;
 
     let c1r0 = zero;
-    let c1r1 = (two * near) / (top - bottom);
+    let c1r1 = (two * near) / (top - (-bottom));
     let c1r2 = zero;
     let c1r3 = zero;
 
-    let c2r0 = -(right + left) / (right - left);
-    let c2r1 = -(top + bottom) / (top - bottom);
+    let c2r0 = -(right + (-left)) / (right - (-left));
+    let c2r1 = -(top + (-bottom)) / (top - (-bottom));
     let c2r2 =  far / (far - near);
     let c2r3 =  one;
 
